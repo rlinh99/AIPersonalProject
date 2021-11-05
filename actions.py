@@ -94,16 +94,19 @@ def genetic_algorithm():
         mating_pool = []
         select()
         children = breed()
-        # children = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]]
         do_mutate(children)
         elite(children)
         print(population_pool)
-        progress_pool.append(population_pool[0])
-        # print(progress_pool)
-        c = progress_pool.pop()
-        print(c)
+        if population_pool[0] not in progress_pool:
+            progress_pool.append(population_pool[0])
+        progress_pool.sort(key=lambda tup: tup[1])
+        print(progress_pool)
     return
 
 
 def run():
     genetic_algorithm()
+    #([6, 2, 9, 1, 4, 8, 3, 7, 10, 5], 2.5832228012801766)
+    # a = [6, 2, 9, 1, 4, 8, 3, 7, 10, 5]
+    # q = fitness(a)
+    # print(q)

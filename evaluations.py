@@ -6,7 +6,7 @@ import random
 def calculate_distance(city1, city2):
     x = city1[0] - city2[0]
     y = city1[1] - city2[1]
-    return round(math.sqrt(x ** 2 + y ** 2), 4)
+    return math.sqrt(x ** 2 + y ** 2)
 
 
 def fitness(route):
