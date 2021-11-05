@@ -16,5 +16,9 @@ def fitness(route):
             next_index = 0
         next_city = route[next_index]
         score = score + calculate_distance(PROJECT_DEFAULT_DATA[city_num]
-                                           ,PROJECT_DEFAULT_DATA[next_city])
+                                           , PROJECT_DEFAULT_DATA[next_city])
     return score
+
+
+def converges(populations):
+    return True
