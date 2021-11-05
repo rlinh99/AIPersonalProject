@@ -9,4 +9,4 @@ PROJECT_DEFAULT_DATA = {1: (0.3642, 0.7770),
                         9: (0.3479, 0.6984),
                         10: (0.4516, 0.0488)}
 
-PROJECT_DEFAULT_POPULATION = 30
+PROJECT_DEFAULT_POPULATION_SIZE = 30
