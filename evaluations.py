@@ -1,5 +1,6 @@
 from defaultData import *
 import math
+import random
 
 
 def calculate_distance(city1, city2):
@@ -18,6 +19,29 @@ def fitness(route):
         score = score + calculate_distance(PROJECT_DEFAULT_DATA[city_num]
                                            , PROJECT_DEFAULT_DATA[next_city])
     return score
+
+
+# crossover uses order based representation
+def get_offstring(gene, start, end, parent):
+    parent_copy = list(parent)
+    orig_length = len(parent_copy)
+    result = [0] * orig_length
+    for index, item in enumerate(gene):
+        parent_copy.remove(item)
+        result[start + index] = item
+    for index2, item2 in enumerate(parent_copy):
+        filling_index = end + index2
+        if filling_index >= orig_length:
+            filling_index = filling_index - orig_length
+        result[filling_index] = item2
+    return result
+
+
+def is_mutation():
+    rand = random.uniform(0, 1)
+    if rand < MUTATION_RATE:
+        return True
+    return False
 
 
 def converges(populations):
