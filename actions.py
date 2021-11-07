@@ -74,7 +74,7 @@ def breed():
 def create_default_populations():
     while len(population_pool) != DEFAULT_POP_SIZE:
         sample = random.sample(range(1, 11), 10)
-        if sample not in population_pool:
+        if (sample, fitness(sample)) not in population_pool:
             population_pool.append((sample, fitness(sample)))
 
 
@@ -99,7 +99,7 @@ def genetic_algorithm():
         if population_pool[0] not in progress_pool:
             progress_pool.append(population_pool[0])
         progress_pool.sort(key=lambda tup: tup[1])
-        print(progress_pool)
+        # print(progress_pool)
     return
 
 
