@@ -48,6 +48,3 @@ def is_mutation():
         return True
     return False
 
-
-def converges(populations):
-    return True

@@ -4,7 +4,6 @@ from helpers import *
 import random
 import matplotlib.pyplot as plt
 
-
 final_data = []
 population_pool = []
 mating_pool = []
@@ -47,14 +46,14 @@ def crossover(parent1, parent2):
 # using weight average selection by rank
 def select():
     sum_of_rank = (DEFAULT_POP_SIZE * (DEFAULT_POP_SIZE + 1)) / 2
-    for i in range(0, DEFAULT_SELECTION_SIZE):
+    while len(mating_pool) != DEFAULT_SELECTION_SIZE:
         target = random.uniform(0, 1)
         accumulated = 0
         for index, pop in enumerate(population_pool):
             rank = DEFAULT_POP_SIZE - index
             prob = rank / sum_of_rank
             accumulated = accumulated + prob
-            if accumulated > target:
+            if accumulated > target and (pop[0] not in mating_pool):
                 mating_pool.append(pop[0])
                 break
     return
@@ -76,7 +75,7 @@ def breed():
 # insert default population
 def create_default_populations():
     while len(population_pool) != DEFAULT_POP_SIZE:
-        sample = random.sample(range(1, 11), 10)
+        sample = random.sample(range(1, len(PROJECT_DEFAULT_DATA)+1), len(PROJECT_DEFAULT_DATA))
         if (sample, fitness(sample)) not in population_pool:
             population_pool.append((sample, fitness(sample)))
 
@@ -91,6 +90,10 @@ def elite(children):
 
 
 def genetic_algorithm():
+    global population_pool
+    population_pool = []
+    global progress_pool
+    progress_pool = []
     create_default_populations()
     for i in range(MAX_ITERATION):
         global mating_pool
@@ -102,10 +105,8 @@ def genetic_algorithm():
         if population_pool[0] not in progress_pool:
             progress_pool.append(population_pool[0])
         progress_pool.sort(key=lambda tup: tup[1])
-        print(progress_pool)
         final_data.append((i, population_pool[0][1]))
-
-    return
+    return progress_pool[0]
 
 
 def asym_genetic_algorithm():
@@ -116,12 +117,21 @@ def run():
     genetic_algorithm()
     x = list(map(lambda x: x[0], final_data))
     y = list(map(lambda x: x[1], final_data))
-    plt.plot(x,y)
-    plt.xlabel = "iterations"
-    plt.ylabel = "cost"
+    plt.plot(x, y)
+    plt.xlabel("iterations")
+    plt.ylabel("cost")
     plt.show()
     # asym_genetic_algorithm()
-    #([6, 2, 9, 1, 4, 8, 3, 7, 10, 5], 2.5832228012801766)
+    # ([6, 2, 9, 1, 4, 8, 3, 7, 10, 5], 2.5832228012801766)
     # a = [6, 2, 9, 1, 4, 8, 3, 7, 10, 5]
     # q = fitness(a)
     # print(q)
+
+
+def multiple_runs(count):
+    distinct_result_pool = []
+    for i in range(0, count):
+        result = genetic_algorithm()
+        if result not in distinct_result_pool:
+            distinct_result_pool.append(result)
+        print(len(distinct_result_pool))
