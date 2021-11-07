@@ -48,7 +48,7 @@ def select():
         target = random.uniform(0, 1)
         accumulated = 0
         for index, pop in enumerate(population_pool):
-            rank = 30 - index
+            rank = DEFAULT_POP_SIZE - index
             prob = rank / sum_of_rank
             accumulated = accumulated + prob
             if accumulated > target:
