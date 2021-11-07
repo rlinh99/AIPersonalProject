@@ -4,6 +4,8 @@ from helpers import *
 import random
 import matplotlib.pyplot as plt
 
+
+is_multi_run = False
 final_data = []
 population_pool = []
 mating_pool = []
@@ -106,6 +108,8 @@ def genetic_algorithm():
             progress_pool.append(population_pool[0])
         progress_pool.sort(key=lambda tup: tup[1])
         final_data.append((i, population_pool[0][1]))
+        if not is_multi_run:
+            print(progress_pool[0])
     return progress_pool[0]
 
 
@@ -122,13 +126,11 @@ def run():
     plt.ylabel("cost")
     plt.show()
     # asym_genetic_algorithm()
-    # ([6, 2, 9, 1, 4, 8, 3, 7, 10, 5], 2.5832228012801766)
-    # a = [6, 2, 9, 1, 4, 8, 3, 7, 10, 5]
-    # q = fitness(a)
-    # print(q)
 
 
 def multiple_runs(count):
+    global is_multi_run
+    is_multi_run = True;
     distinct_result_pool = []
     for i in range(0, count):
         result = genetic_algorithm()
