@@ -27,7 +27,7 @@ def fitness(route):
 
 
 # crossover uses order based representation
-def get_offstring(gene, start, end, parent):
+def get_offspring(gene, start, end, parent):
     parent_copy = list(parent)
     orig_length = len(parent_copy)
     result = [0] * orig_length

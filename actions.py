@@ -42,7 +42,7 @@ def crossover(parent1, parent2):
         start = cp2
         end = cp
     gene = parent1[start:end]
-    return get_offstring(gene, start, end, parent2)
+    return get_offspring(gene, start, end, parent2)
 
 
 # using weight average selection by rank
