@@ -9,6 +9,11 @@ def calculate_distance(city1, city2):
     return math.sqrt(x ** 2 + y ** 2)
 
 
+def calculate_asym_distance(city1, city2):
+    x = city1[0] - city2[0]
+    y = city1[1] - city2[1]
+
+
 def fitness(route):
     score = 0
     for index, city_num in enumerate(route):

@@ -14,7 +14,7 @@ def mutate(chromosome):
     temp = chromosome[x - 1]
     chromosome[x - 1] = chromosome[y - 1]
     chromosome[y - 1] = temp
-    return chromosome
+    return
 
 
 def do_mutate(children):
@@ -96,7 +96,6 @@ def genetic_algorithm():
         children = breed()
         do_mutate(children)
         elite(children)
-        print(population_pool)
         if population_pool[0] not in progress_pool:
             progress_pool.append(population_pool[0])
         progress_pool.sort(key=lambda tup: tup[1])
@@ -104,8 +103,13 @@ def genetic_algorithm():
     return
 
 
+def asym_genetic_algorithm():
+    return
+
+
 def run():
     genetic_algorithm()
+    # asym_genetic_algorithm()
     #([6, 2, 9, 1, 4, 8, 3, 7, 10, 5], 2.5832228012801766)
     # a = [6, 2, 9, 1, 4, 8, 3, 7, 10, 5]
     # q = fitness(a)
