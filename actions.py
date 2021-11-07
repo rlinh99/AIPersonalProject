@@ -2,7 +2,10 @@ from defaultData import *
 from evaluations import *
 from helpers import *
 import random
+import matplotlib.pyplot as plt
 
+
+final_data = []
 population_pool = []
 mating_pool = []
 progress_pool = []
@@ -99,7 +102,9 @@ def genetic_algorithm():
         if population_pool[0] not in progress_pool:
             progress_pool.append(population_pool[0])
         progress_pool.sort(key=lambda tup: tup[1])
-        # print(progress_pool)
+        print(progress_pool)
+        final_data.append((i, population_pool[0][1]))
+
     return
 
 
@@ -109,6 +114,12 @@ def asym_genetic_algorithm():
 
 def run():
     genetic_algorithm()
+    x = list(map(lambda x: x[0], final_data))
+    y = list(map(lambda x: x[1], final_data))
+    plt.plot(x,y)
+    plt.xlabel = "iterations"
+    plt.ylabel = "cost"
+    plt.show()
     # asym_genetic_algorithm()
     #([6, 2, 9, 1, 4, 8, 3, 7, 10, 5], 2.5832228012801766)
     # a = [6, 2, 9, 1, 4, 8, 3, 7, 10, 5]
