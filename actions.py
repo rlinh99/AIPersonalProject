@@ -4,12 +4,12 @@ from helpers import *
 import random
 import matplotlib.pyplot as plt
 
-
 is_multi_run = False
 final_data = []
 population_pool = []
 mating_pool = []
 progress_pool = []
+cities = []
 
 
 # mutate by in place exchange
@@ -21,10 +21,31 @@ def mutate(chromosome):
     return
 
 
-def do_mutate(children):
+# mutation by in place exchange, but keep the pattern
+def sop_mutate(chromosome):
+    print(cities)
+    print(chromosome)
+    head, tail = find_pattern(chromosome)
+    targets = random.sample(cities, 2)
+    print(targets)
+    if head != -1 and tail != -1:
+        index1 = chromosome.index(targets[0])
+        index2 = chromosome.index(targets[1])
+        temp = chromosome[index1]
+        chromosome[index1] = chromosome[index2]
+        chromosome[index2] = temp
+    print(head, tail)
+    print(chromosome)
+    return
+
+
+def do_mutate(children, is_sop):
     for child in children:
         if is_mutation:
-            mutate(child)
+            if is_sop:
+                sop_mutate(child)
+            else:
+                mutate(child)
     return
 
 
@@ -45,6 +66,25 @@ def crossover(parent1, parent2):
     return get_offspring(gene, start, end, parent2)
 
 
+def sop_crossover(parent1, parent2):
+    # find pattern indexes
+    p1, p2 = find_pattern(parent1)
+    target = random.sample(cities, 1)[0]
+    element_list = list(parent1)
+    boudary_index = element_list.index(target)
+    if boudary_index < p1:
+        start = boudary_index
+        end = p2 + 1
+    elif target > p2:
+        start = p1
+        end = target
+    else:
+        start = p1
+        end = p2 + 1
+    gene = parent1[start:end]
+    return get_offspring(gene, start, end, parent2)
+
+
 # using weight average selection by rank
 def select():
     sum_of_rank = (DEFAULT_POP_SIZE * (DEFAULT_POP_SIZE + 1)) / 2
@@ -61,14 +101,17 @@ def select():
     return
 
 
-def breed():
+def breed(is_sop):
     children = []
     for index, parent in enumerate(mating_pool):
         while True:
             index_parent2 = random.randint(0, len(mating_pool) - 1)
             if index != index_parent2:
                 break
-        child = crossover(mating_pool[index], mating_pool[index_parent2])
+        if is_sop:
+            child = sop_crossover(mating_pool[index], mating_pool[index_parent2])
+        else:
+            child = crossover(mating_pool[index], mating_pool[index_parent2])
         children.append(child)
     return children
 
@@ -77,12 +120,32 @@ def breed():
 # insert default population
 def create_default_populations(is_asym):
     while len(population_pool) != DEFAULT_POP_SIZE:
-        sample = random.sample(range(1, len(PROJECT_DEFAULT_DATA)+1), len(PROJECT_DEFAULT_DATA))
+        sample = random.sample(range(1, len(PROJECT_DEFAULT_DATA) + 1), len(PROJECT_DEFAULT_DATA))
         if (sample, fitness(sample)) not in population_pool:
             if is_asym:
                 population_pool.append((sample, asym_fitness(sample)))
             else:
                 population_pool.append((sample, fitness(sample)))
+
+
+def create_seq_populations():
+    global cities
+    cities = list(PROJECT_DEFAULT_DATA.keys())
+    for p in EXT_PATTERN:
+        cities.remove(p)
+    while len(population_pool) != DEFAULT_POP_SIZE:
+        sample = [0] * len(PROJECT_DEFAULT_DATA)
+        right_bound = len(PROJECT_DEFAULT_DATA) - len(EXT_PATTERN)
+        pattern_start_index = random.randint(0, right_bound)
+        for i, item in enumerate(EXT_PATTERN):
+            sample[pattern_start_index + i] = item
+        test = random.sample(cities, len(cities))
+        for i, item in enumerate(sample):
+            if item == 0:
+                sample[i] = test.pop()
+        population_pool.append((sample, fitness(sample)))
+    print(len(population_pool))
+    return
 
 
 def elite(children, is_asym):
@@ -97,19 +160,23 @@ def elite(children, is_asym):
     population_pool.sort(key=lambda tup: tup[1])
 
 
-def genetic_algorithm(is_asym):
+def genetic_algorithm(is_asym, is_sop):
     global population_pool
     population_pool = []
     global progress_pool
     progress_pool = []
-    create_default_populations(is_asym)
+    if is_sop:
+        create_seq_populations()
+    else:
+        create_default_populations(is_asym)
 
     for i in range(MAX_ITERATION):
         global mating_pool
         mating_pool = []
         select()
-        children = breed()
-        do_mutate(children)
+        print(mating_pool)
+        children = breed(is_sop)
+        do_mutate(children, is_sop)
         elite(children, is_asym)
         if population_pool[0] not in progress_pool:
             progress_pool.append(population_pool[0])
@@ -120,12 +187,7 @@ def genetic_algorithm(is_asym):
     return progress_pool[0]
 
 
-def run():
-    # is asym
-    # genetic_algorithm(True)
-    # not asym
-    genetic_algorithm(False)
-
+def plot():
     x = list(map(lambda x: x[0], final_data))
     y = list(map(lambda x: x[1], final_data))
     plt.plot(x, y)
@@ -134,9 +196,30 @@ def run():
     plt.show()
 
 
+# main running function for the project, please comment out other
+# algorithms when running the program
+def run():
+    # is asym
+    # genetic_algorithm(True, False)
+
+    # not asym
+    # genetic_algorithm(False, False)
+
+    # SOP
+    genetic_algorithm(False, True)
+    # create_seq_populations()
+    # a = [9, 10, 1, 2, 3, 4, 5, 6, 7, 8]
+    # b = [10 , 7, 9, 8,4,5,6,1,2,3]
+    # c = sop_crossover(a, b)
+    # sop_mutate(a)
+    # print(c)
+    # plot
+    plot()
+
+
 def multiple_runs(count):
     global is_multi_run
-    is_multi_run = True;
+    is_multi_run = True
     distinct_result_pool = []
     for i in range(0, count):
         result = genetic_algorithm(True)
@@ -145,4 +228,3 @@ def multiple_runs(count):
         distinct_result_pool.sort(key=lambda tup: tup[1])
         print(f"The number of distinct best solutions found so far is: {len(distinct_result_pool)}")
         print(distinct_result_pool)
-

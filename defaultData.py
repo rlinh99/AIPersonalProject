@@ -35,14 +35,14 @@ PROJECT_DEFAULT_DATA = {1: (0.3642, 0.7770),
 #                         20: (0.5553, 0.6786)}
 
 # default population size of GA
-DEFAULT_POP_SIZE = 100
+DEFAULT_POP_SIZE = 50
 
 # default mating pool size of GA
-DEFAULT_SELECTION_SIZE = 50
+DEFAULT_SELECTION_SIZE = 30
 
 # default mutation rate of GA
 MUTATION_RATE = 0.03
 
 # maximum iteration of the simulation
-MAX_ITERATION = 200
+MAX_ITERATION = 100
 

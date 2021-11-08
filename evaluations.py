@@ -38,8 +38,8 @@ def asym_fitness(route):
             score = score + calculate_distance(PROJECT_DEFAULT_DATA[city_num],
                                                PROJECT_DEFAULT_DATA[next_city])
         else:
-            score = score + calculate_distance(EXTENSION_ASYM_DATA[city_num],
-                                               EXTENSION_ASYM_DATA[next_city])
+            score = score + calculate_distance(EXT_ASYM_DATA[city_num],
+                                               EXT_ASYM_DATA[next_city])
     return score
 
 
