@@ -198,14 +198,14 @@ def plot():
 # main running function for the project, please comment out other
 # algorithms when running the program
 def run():
-    # is asym
+    # run this function for Symmetric TSP
+    genetic_algorithm(False, False)
+
+    # run this function for Asymmetric TSP
     # genetic_algorithm(True, False)
 
-    # not asym
-    # genetic_algorithm(False, False)
-
-    # SOP
-    genetic_algorithm(False, True)
+    # run this function for SOP
+    # genetic_algorithm(False, True)
 
     plot()
 
@@ -215,7 +215,7 @@ def multiple_runs(count):
     is_multi_run = True
     distinct_result_pool = []
     for i in range(0, count):
-        result = genetic_algorithm(True)
+        result = genetic_algorithm(False, False)
         if result not in distinct_result_pool:
             distinct_result_pool.append(result)
         distinct_result_pool.sort(key=lambda tup: tup[1])
