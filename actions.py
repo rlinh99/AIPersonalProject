@@ -75,64 +75,42 @@ def breed():
 
 # create default population pool according to the size defined in defaultData.py
 # insert default population
-def create_default_populations():
+def create_default_populations(is_asym):
     while len(population_pool) != DEFAULT_POP_SIZE:
         sample = random.sample(range(1, len(PROJECT_DEFAULT_DATA)+1), len(PROJECT_DEFAULT_DATA))
         if (sample, fitness(sample)) not in population_pool:
-            population_pool.append((sample, fitness(sample)))
+            if is_asym:
+                population_pool.append((sample, asym_fitness(sample)))
+            else:
+                population_pool.append((sample, fitness(sample)))
 
 
-def create_default_asym_population():
-    while len(population_pool) != DEFAULT_POP_SIZE:
-        sample = random.sample(range(1, len(PROJECT_DEFAULT_DATA)+1), len(PROJECT_DEFAULT_DATA))
-        if (sample, fitness(sample)) not in population_pool:
-            population_pool.append((sample, asym_fitness(sample)))
-
-
-def elite(children):
+def elite(children, is_asym):
     elite_len = len(children)
     for i in range(elite_len):
         population_pool.pop()
     for child in children:
-        population_pool.append((child, fitness(child)))
+        if is_asym:
+            population_pool.append((child, asym_fitness(child)))
+        else:
+            population_pool.append((child, fitness(child)))
     population_pool.sort(key=lambda tup: tup[1])
 
 
-def genetic_algorithm():
+def genetic_algorithm(is_asym):
     global population_pool
     population_pool = []
     global progress_pool
     progress_pool = []
-    create_default_populations()
+    create_default_populations(is_asym)
+
     for i in range(MAX_ITERATION):
         global mating_pool
         mating_pool = []
         select()
         children = breed()
         do_mutate(children)
-        elite(children)
-        if population_pool[0] not in progress_pool:
-            progress_pool.append(population_pool[0])
-        progress_pool.sort(key=lambda tup: tup[1])
-        final_data.append((i, population_pool[0][1]))
-        if not is_multi_run:
-            print(progress_pool[0])
-    return progress_pool[0]
-
-
-def asym_genetic_algorithm():
-    global population_pool
-    population_pool = []
-    global progress_pool
-    progress_pool = []
-    create_default_asym_population()
-    for i in range(MAX_ITERATION):
-        global mating_pool
-        mating_pool = []
-        select()
-        children = breed()
-        do_mutate(children)
-        elite(children)
+        elite(children, is_asym)
         if population_pool[0] not in progress_pool:
             progress_pool.append(population_pool[0])
         progress_pool.sort(key=lambda tup: tup[1])
@@ -143,8 +121,10 @@ def asym_genetic_algorithm():
 
 
 def run():
-    # genetic_algorithm()
-    asym_genetic_algorithm()
+    # is asym
+    # genetic_algorithm(True)
+    # not asym
+    genetic_algorithm(False)
 
     x = list(map(lambda x: x[0], final_data))
     y = list(map(lambda x: x[1], final_data))
@@ -159,7 +139,7 @@ def multiple_runs(count):
     is_multi_run = True;
     distinct_result_pool = []
     for i in range(0, count):
-        result = genetic_algorithm()
+        result = genetic_algorithm(True)
         if result not in distinct_result_pool:
             distinct_result_pool.append(result)
         distinct_result_pool.sort(key=lambda tup: tup[1])
