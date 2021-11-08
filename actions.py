@@ -82,6 +82,13 @@ def create_default_populations():
             population_pool.append((sample, fitness(sample)))
 
 
+def create_default_asym_population():
+    while len(population_pool) != DEFAULT_POP_SIZE:
+        sample = random.sample(range(1, len(PROJECT_DEFAULT_DATA)+1), len(PROJECT_DEFAULT_DATA))
+        if (sample, fitness(sample)) not in population_pool:
+            population_pool.append((sample, asym_fitness(sample)))
+
+
 def elite(children):
     elite_len = len(children)
     for i in range(elite_len):
@@ -114,18 +121,37 @@ def genetic_algorithm():
 
 
 def asym_genetic_algorithm():
-    return
+    global population_pool
+    population_pool = []
+    global progress_pool
+    progress_pool = []
+    create_default_asym_population()
+    for i in range(MAX_ITERATION):
+        global mating_pool
+        mating_pool = []
+        select()
+        children = breed()
+        do_mutate(children)
+        elite(children)
+        if population_pool[0] not in progress_pool:
+            progress_pool.append(population_pool[0])
+        progress_pool.sort(key=lambda tup: tup[1])
+        final_data.append((i, population_pool[0][1]))
+        if not is_multi_run:
+            print(progress_pool[0])
+    return progress_pool[0]
 
 
 def run():
-    genetic_algorithm()
+    # genetic_algorithm()
+    asym_genetic_algorithm()
+
     x = list(map(lambda x: x[0], final_data))
     y = list(map(lambda x: x[1], final_data))
     plt.plot(x, y)
     plt.xlabel("iterations")
     plt.ylabel("cost")
     plt.show()
-    # asym_genetic_algorithm()
 
 
 def multiple_runs(count):
@@ -136,4 +162,7 @@ def multiple_runs(count):
         result = genetic_algorithm()
         if result not in distinct_result_pool:
             distinct_result_pool.append(result)
-        print(len(distinct_result_pool))
+        distinct_result_pool.sort(key=lambda tup: tup[1])
+        print(f"The number of distinct best solutions found so far is: {len(distinct_result_pool)}")
+        print(distinct_result_pool)
+
